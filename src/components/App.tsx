@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/lib/store";
+import AuthProvider from "@/components/AuthProvider";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import TrailerSection from "@/components/TrailerSection";
@@ -20,7 +21,7 @@ export default function App() {
   const { currentView } = useAppStore();
 
   return (
-    <>
+    <AuthProvider>
       <Navigation />
       <AuthModal />
 
@@ -53,6 +54,6 @@ export default function App() {
           <Footer />
         </>
       )}
-    </>
+    </AuthProvider>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAppStore } from "@/lib/store";
+import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 
 export default function Navigation() {
@@ -80,7 +81,7 @@ export default function Navigation() {
                         Admin Panel
                       </button>
                       <button
-                        onClick={() => { setUser(null); setMenuOpen(false); }}
+                        onClick={async () => { await supabase.auth.signOut(); setMenuOpen(false); }}
                         className="w-full px-3 py-2 text-sm text-left text-red-400 hover:bg-white/5 transition-colors"
                       >
                         Sign Out

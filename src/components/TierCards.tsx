@@ -32,6 +32,7 @@ export default function TierCards() {
           type: tier.id === 10 ? "founding" : "tier",
           tierId: String(tier.id),
           amount: tier.id === 10 ? (Number(checkoutData[`${tier.id}-amount`]) || tier.price) : undefined,
+          userId: user?.id,
           metadata,
         }),
       });

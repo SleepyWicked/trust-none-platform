@@ -5,7 +5,7 @@ import { coinPackages, FULL_SEASON_PRICE, CREW_FUND_PERCENTAGE } from "@/lib/tie
 import { useAppStore } from "@/lib/store";
 
 export default function CoinPurchaseModal({ onClose }: { onClose: () => void }) {
-  const { addCoins, coinBalance, unlockAllEpisodes, addToCrewFund, addTransaction } =
+  const { addCoins, coinBalance, unlockAllEpisodes, addToCrewFund, addTransaction, user } =
     useAppStore();
   const [processing, setProcessing] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -17,7 +17,7 @@ export default function CoinPurchaseModal({ onClose }: { onClose: () => void }) 
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "coins", packageId: pkg.id }),
+        body: JSON.stringify({ type: "coins", packageId: pkg.id, userId: user?.id }),
       });
       const data = await res.json();
       if (data.url) {
@@ -41,7 +41,7 @@ export default function CoinPurchaseModal({ onClose }: { onClose: () => void }) 
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "season" }),
+        body: JSON.stringify({ type: "season", userId: user?.id }),
       });
       const data = await res.json();
       if (data.url) {
