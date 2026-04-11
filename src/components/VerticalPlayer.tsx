@@ -38,6 +38,11 @@ export default function VerticalPlayer() {
   // Get video URL: from store (admin-set) or from episode data
   const videoUrl = episodeVideoUrls[ep.id] || ep.videoUrl || "";
   const hasVideo = videoUrl.length > 0;
+  const isBunnyPlayer = hasVideo && (videoUrl.includes("mediadelivery.net") || videoUrl.includes("player.mediadelivery.net"));
+  // Convert play URL to embed URL for iframe
+  const embedUrl = isBunnyPlayer
+    ? videoUrl.replace("/play/", "/embed/") + "?autoplay=true&preload=true&responsive=true"
+    : "";
 
   // ---- REAL VIDEO PLAYBACK ----
   useEffect(() => {
@@ -192,8 +197,19 @@ export default function VerticalPlayer() {
         onTouchEnd={handleTouchEnd}
         onClick={handleTap}
       >
-        {/* Real video element */}
-        {hasVideo && unlocked && (
+        {/* Bunny.net iframe player */}
+        {isBunnyPlayer && unlocked && (
+          <iframe
+            src={embedUrl}
+            className="absolute inset-0 w-full h-full border-0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            style={{ pointerEvents: showControls ? "none" : "auto" }}
+          />
+        )}
+
+        {/* Direct video element (non-Bunny URLs like .mp4) */}
+        {hasVideo && !isBunnyPlayer && unlocked && (
           <video
             ref={videoRef}
             src={videoUrl}

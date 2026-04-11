@@ -11,7 +11,10 @@ export default function TrailerSection() {
 
   const trailerUrl = storeTrailerUrl || TRAILER_URL || "";
   const hasTrailer = trailerUrl.length > 0;
-  const isIframe = hasTrailer && (trailerUrl.includes("mediadelivery.net") || trailerUrl.includes("iframe"));
+  const isIframe = hasTrailer && trailerUrl.includes("mediadelivery.net");
+  const trailerEmbedUrl = isIframe
+    ? trailerUrl.replace("/play/", "/embed/") + "?autoplay=true&preload=true"
+    : trailerUrl;
 
   const handlePlay = () => {
     if (hasTrailer && !isIframe) {
@@ -57,7 +60,7 @@ export default function TrailerSection() {
             {hasTrailer && !isIframe && (
               <video
                 ref={videoRef}
-                src={trailerUrl}
+                src={trailerEmbedUrl}
                 className={`absolute inset-0 w-full h-full object-cover ${playing ? "opacity-100" : "opacity-0"}`}
                 playsInline
                 preload="auto"
@@ -68,7 +71,7 @@ export default function TrailerSection() {
             {/* Bunny.net iframe embed */}
             {isIframe && playing && (
               <iframe
-                src={trailerUrl}
+                src={trailerEmbedUrl}
                 className="absolute inset-0 w-full h-full"
                 allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
