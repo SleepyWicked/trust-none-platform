@@ -28,7 +28,6 @@ interface AppState {
   unlockedEpisodes: number[];
   unlockEpisode: (episodeId: number) => void;
   unlockAllEpisodes: () => void;
-  isEpisodeUnlocked: (episodeId: number) => boolean;
 
   // Watch progress
   watchProgress: Record<number, number>;
@@ -100,8 +99,6 @@ export const useAppStore = create<AppState>()(
         })),
       unlockAllEpisodes: () =>
         set({ unlockedEpisodes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] }),
-      isEpisodeUnlocked: (episodeId) =>
-        get().unlockedEpisodes.includes(episodeId),
 
       // Watch progress
       watchProgress: {},

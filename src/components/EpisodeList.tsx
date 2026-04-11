@@ -7,13 +7,13 @@ import EpisodeCard from "./EpisodeCard";
 import CoinPurchaseModal from "./CoinPurchaseModal";
 
 export default function EpisodeList() {
-  const { isEpisodeUnlocked, spendCoins, unlockEpisode, coinBalance, user, openAuth, addTransaction, setCurrentView, setCurrentEpisode } =
+  const { unlockedEpisodes, spendCoins, unlockEpisode, coinBalance, user, openAuth, addTransaction, setCurrentView, setCurrentEpisode } =
     useAppStore();
   const [unlockModal, setUnlockModal] = useState<number | null>(null);
   const [coinModal, setCoinModal] = useState(false);
 
   const unlockedCount = episodes.filter(
-    (e) => e.isFree || isEpisodeUnlocked(e.id)
+    (e) => e.isFree || unlockedEpisodes.includes(e.id)
   ).length;
 
   const handlePlay = (ep: typeof episodes[0]) => {
@@ -23,7 +23,7 @@ export default function EpisodeList() {
   };
 
   const handleUnlock = (ep: typeof episodes[0]) => {
-    if (ep.isFree || isEpisodeUnlocked(ep.id)) {
+    if (ep.isFree || unlockedEpisodes.includes(ep.id)) {
       handlePlay(ep);
       return;
     }

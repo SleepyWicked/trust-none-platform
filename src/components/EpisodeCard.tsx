@@ -11,8 +11,8 @@ interface Props {
 }
 
 export default function EpisodeCard({ episode, onPlay, onUnlock, index }: Props) {
-  const { isEpisodeUnlocked, watchProgress } = useAppStore();
-  const unlocked = episode.isFree || isEpisodeUnlocked(episode.id);
+  const { unlockedEpisodes, watchProgress } = useAppStore();
+  const unlocked = episode.isFree || unlockedEpisodes.includes(episode.id);
   const progress = watchProgress[episode.id] || 0;
   const progressPct = episode.runtimeSeconds > 0 ? (progress / episode.runtimeSeconds) * 100 : 0;
 

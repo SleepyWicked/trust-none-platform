@@ -8,7 +8,7 @@ export default function VerticalPlayer() {
   const {
     currentEpisode,
     setCurrentEpisode,
-    isEpisodeUnlocked,
+    unlockedEpisodes,
     setCurrentView,
     watchProgress,
     setWatchProgress,
@@ -27,7 +27,7 @@ export default function VerticalPlayer() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const ep = episodes.find((e) => e.number === currentEpisode) || episodes[0];
-  const unlocked = ep.isFree || isEpisodeUnlocked(ep.id);
+  const unlocked = ep.isFree || unlockedEpisodes.includes(ep.id);
   const nextEp = episodes.find((e) => e.number === currentEpisode + 1);
   const prevEp = episodes.find((e) => e.number === currentEpisode - 1);
 
@@ -36,24 +36,24 @@ export default function VerticalPlayer() {
     if (isPlaying && unlocked) {
       const startTime = watchProgress[ep.id] || 0;
       setProgress(startTime);
+      let currentProgress = watchProgress[ep.id] || 0;
       timerRef.current = setInterval(() => {
-        setProgress((p) => {
-          const next = p + 1;
-          if (next >= ep.runtimeSeconds) {
-            clearInterval(timerRef.current!);
-            setIsPlaying(false);
-            // Auto-advance
-            if (nextEp) {
-              setTimeout(() => {
-                setCurrentEpisode(nextEp.number);
-                setIsPlaying(true);
-              }, 1500);
-            }
-            return ep.runtimeSeconds;
+        currentProgress += 1;
+        if (currentProgress >= ep.runtimeSeconds) {
+          clearInterval(timerRef.current!);
+          setProgress(ep.runtimeSeconds);
+          setWatchProgress(ep.id, ep.runtimeSeconds);
+          setIsPlaying(false);
+          if (nextEp) {
+            setTimeout(() => {
+              setCurrentEpisode(nextEp.number);
+              setIsPlaying(true);
+            }, 1500);
           }
-          setWatchProgress(ep.id, next);
-          return next;
-        });
+          return;
+        }
+        setProgress(currentProgress);
+        setWatchProgress(ep.id, currentProgress);
       }, 1000);
     }
     return () => {
