@@ -6,8 +6,9 @@ import { tiers, coinPackages } from "@/lib/tiers";
 import { useAppStore } from "@/lib/store";
 
 export default function AdminPanel() {
-  const { user, crewFundTotal, foundingSupporters, transactions } = useAppStore();
+  const { user, crewFundTotal, foundingSupporters, transactions, episodeVideoUrls, setEpisodeVideoUrl, trailerUrl, setTrailerUrl } = useAppStore();
   const [activeTab, setActiveTab] = useState<"overview" | "episodes" | "sales" | "tiers">("overview");
+  const [savedMsg, setSavedMsg] = useState("");
 
   if (!user) {
     return (
@@ -85,6 +86,28 @@ export default function AdminPanel() {
               </div>
             </div>
 
+            {/* Trailer URL */}
+            <div className="p-6 rounded-xl bg-smoke/50 border border-white/5 mb-6">
+              <h3 className="text-lg font-bold mb-4">Trailer Video</h3>
+              <p className="text-xs text-steel mb-2">Paste a Bunny.net stream URL or direct video URL</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="https://iframe.mediadelivery.net/embed/... or .mp4 URL"
+                  value={trailerUrl}
+                  onChange={(e) => setTrailerUrl(e.target.value)}
+                  className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold/50"
+                />
+                <button
+                  onClick={() => { setSavedMsg("Trailer URL saved!"); setTimeout(() => setSavedMsg(""), 2000); }}
+                  className="px-4 py-2 bg-gold text-black text-sm font-bold rounded-lg hover:bg-gold-light"
+                >
+                  Save
+                </button>
+              </div>
+              {trailerUrl && <p className="text-xs text-green-400 mt-2">Active trailer URL set</p>}
+            </div>
+
             {/* Coin economics */}
             <div className="p-6 rounded-xl bg-smoke/50 border border-white/5">
               <h3 className="text-lg font-bold mb-4">Coin Economics</h3>
@@ -119,23 +142,56 @@ export default function AdminPanel() {
 
         {activeTab === "episodes" && (
           <div className="space-y-3">
+            {savedMsg && (
+              <div className="p-2 rounded-lg bg-green-500/10 border border-green-500/20 text-center text-sm text-green-400">
+                {savedMsg}
+              </div>
+            )}
+            <div className="p-4 rounded-xl bg-smoke/50 border border-gold/10 mb-2">
+              <h3 className="text-sm font-bold text-gold mb-2">How to add videos</h3>
+              <ol className="text-xs text-gray-400 space-y-1 list-decimal list-inside">
+                <li>Upload your video to Bunny.net Stream</li>
+                <li>Copy the direct playback URL or embed URL</li>
+                <li>Paste it in the video URL field below for each episode</li>
+                <li>The player will automatically use the real video</li>
+              </ol>
+            </div>
             {episodes.map((ep) => (
-              <div key={ep.id} className="p-4 rounded-xl bg-smoke/50 border border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center text-gold font-bold text-sm">
-                    {ep.number}
+              <div key={ep.id} className="p-4 rounded-xl bg-smoke/50 border border-white/5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center text-gold font-bold text-sm">
+                      {ep.number}
+                    </div>
+                    <div>
+                      <h4 className="font-bold">{ep.title}</h4>
+                      <p className="text-xs text-steel">{ep.runtime} &middot; {ep.isFree ? "Free" : `${ep.coinCost} coins`}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold">{ep.title}</h4>
-                    <p className="text-xs text-steel">{ep.runtime} &middot; {ep.isFree ? "Free" : `${ep.coinCost} coins`}</p>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-0.5 text-xs rounded-full ${ep.isFree ? "bg-green-500/20 text-green-400" : "bg-gold/20 text-gold"}`}>
+                      {ep.isFree ? "Free" : "Premium"}
+                    </span>
+                    {episodeVideoUrls[ep.id] && (
+                      <span className="px-2 py-0.5 text-xs rounded-full bg-blue-500/20 text-blue-400">
+                        Video Set
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className={`px-2 py-0.5 text-xs rounded-full ${ep.isFree ? "bg-green-500/20 text-green-400" : "bg-gold/20 text-gold"}`}>
-                    {ep.isFree ? "Free" : "Premium"}
-                  </span>
-                  <button className="px-3 py-1 text-xs bg-white/5 rounded-lg hover:bg-white/10 text-steel">
-                    Edit
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Paste Bunny.net video URL (.mp4 or stream URL)"
+                    value={episodeVideoUrls[ep.id] || ""}
+                    onChange={(e) => setEpisodeVideoUrl(ep.id, e.target.value)}
+                    className="flex-1 px-3 py-2 bg-black/30 border border-white/10 rounded-lg text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold/50"
+                  />
+                  <button
+                    onClick={() => { setSavedMsg(`Episode ${ep.number} video saved!`); setTimeout(() => setSavedMsg(""), 2000); }}
+                    className="px-3 py-2 bg-gold/20 text-gold text-xs font-bold rounded-lg hover:bg-gold/30"
+                  >
+                    Save
                   </button>
                 </div>
               </div>

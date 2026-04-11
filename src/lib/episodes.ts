@@ -10,7 +10,10 @@ export interface Episode {
   thumbnailGradient: string;
   thumbnailIcon: string;
   season: number;
+  videoUrl?: string;
 }
+
+export const TRAILER_URL = ""; // Set via admin panel or paste Bunny.net URL here
 
 export const SHOW_INFO = {
   title: "Trust None",

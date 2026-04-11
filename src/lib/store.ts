@@ -45,6 +45,12 @@ interface AppState {
   purchasedTiers: number[];
   purchaseTier: (tierId: number) => void;
 
+  // Video URLs
+  episodeVideoUrls: Record<number, string>;
+  trailerUrl: string;
+  setEpisodeVideoUrl: (episodeId: number, url: string) => void;
+  setTrailerUrl: (url: string) => void;
+
   // UI
   currentView: "landing" | "watch" | "dashboard" | "admin";
   currentEpisode: number;
@@ -125,6 +131,15 @@ export const useAppStore = create<AppState>()(
             ? s.purchasedTiers
             : [...s.purchasedTiers, tierId],
         })),
+
+      // Video URLs
+      episodeVideoUrls: {},
+      trailerUrl: "",
+      setEpisodeVideoUrl: (episodeId, url) =>
+        set((s) => ({
+          episodeVideoUrls: { ...s.episodeVideoUrls, [episodeId]: url },
+        })),
+      setTrailerUrl: (url) => set({ trailerUrl: url }),
 
       // UI
       currentView: "landing",
