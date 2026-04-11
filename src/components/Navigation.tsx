@@ -74,12 +74,14 @@ export default function Navigation() {
                       >
                         Dashboard
                       </button>
-                      <button
-                        onClick={() => { setCurrentView("admin"); setMenuOpen(false); }}
-                        className="w-full px-3 py-2 text-sm text-left hover:bg-white/5 transition-colors"
-                      >
-                        Admin Panel
-                      </button>
+                      {user.email.toLowerCase() === "mickeyelahi@gmail.com" && (
+                        <button
+                          onClick={() => { setCurrentView("admin"); setMenuOpen(false); }}
+                          className="w-full px-3 py-2 text-sm text-left hover:bg-white/5 transition-colors"
+                        >
+                          Admin Panel
+                        </button>
+                      )}
                       <button
                         onClick={async () => { await supabase.auth.signOut(); setMenuOpen(false); }}
                         className="w-full px-3 py-2 text-sm text-left text-red-400 hover:bg-white/5 transition-colors"

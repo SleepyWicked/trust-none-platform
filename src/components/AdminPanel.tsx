@@ -10,10 +10,13 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<"overview" | "episodes" | "sales" | "tiers">("overview");
   const [savedMsg, setSavedMsg] = useState("");
 
-  if (!user) {
+  const ADMIN_EMAILS = ["mickeyelahi@gmail.com"];
+  const isAdmin = user && ADMIN_EMAILS.includes(user.email.toLowerCase());
+
+  if (!user || !isAdmin) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
-        <p className="text-steel">Sign in to access admin panel.</p>
+        <p className="text-steel">{!user ? "Sign in to access admin panel." : "Access denied. Admin only."}</p>
       </div>
     );
   }
