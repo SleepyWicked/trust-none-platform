@@ -17,12 +17,35 @@ export default function TierCards() {
       if (missing.length > 0) return;
     }
     setProcessing(tier.id);
-    await new Promise(r => setTimeout(r, 2000));
-    purchaseTier(tier.id);
-    unlockAllEpisodes();
-    addToCrewFund(tier.price * CREW_FUND_PERCENTAGE);
-    addTransaction({ type: "tier_purchase", amount: tier.price, description: `Purchased: ${tier.name}` });
-    setProcessing(null);
+    // Collect checkout field data as metadata
+    const metadata: Record<string, string> = {};
+    if (tier.collectAtCheckout) {
+      tier.collectAtCheckout.forEach(field => {
+        metadata[field.replace(/\s+/g, "_")] = checkoutData[`${tier.id}-${field}`] || "";
+      });
+    }
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: tier.id === 10 ? "founding" : "tier",
+          tierId: String(tier.id),
+          amount: tier.id === 10 ? (Number(checkoutData[`${tier.id}-amount`]) || tier.price) : undefined,
+          metadata,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        setProcessing(null);
+      }
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setProcessing(null);
+    }
   };
 
   const tierColors = [

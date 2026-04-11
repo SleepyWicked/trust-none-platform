@@ -13,34 +13,49 @@ export default function CoinPurchaseModal({ onClose }: { onClose: () => void }) 
   const handlePurchaseCoins = async (pkg: (typeof coinPackages)[0]) => {
     setProcessing(true);
     setSelected(pkg.id);
-    // Simulate Stripe checkout
-    await new Promise((r) => setTimeout(r, 1500));
-    addCoins(pkg.coins);
-    addToCrewFund(pkg.price * CREW_FUND_PERCENTAGE);
-    addTransaction({
-      type: "coin_purchase",
-      amount: pkg.price,
-      description: `Purchased ${pkg.coins} coins`,
-    });
-    setProcessing(false);
-    setSelected(null);
-    onClose();
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "coins", packageId: pkg.id }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        setProcessing(false);
+        setSelected(null);
+      }
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setProcessing(false);
+      setSelected(null);
+    }
   };
 
   const handleFullSeason = async () => {
     setProcessing(true);
     setSelected("season");
-    await new Promise((r) => setTimeout(r, 1500));
-    unlockAllEpisodes();
-    addToCrewFund(FULL_SEASON_PRICE * CREW_FUND_PERCENTAGE);
-    addTransaction({
-      type: "tier_purchase",
-      amount: FULL_SEASON_PRICE,
-      description: "Full Season 1 Unlock",
-    });
-    setProcessing(false);
-    setSelected(null);
-    onClose();
+    try {
+      const res = await fetch("/api/stripe/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "season" }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error("Checkout error:", data.error);
+        setProcessing(false);
+        setSelected(null);
+      }
+    } catch (err) {
+      console.error("Checkout failed:", err);
+      setProcessing(false);
+      setSelected(null);
+    }
   };
 
   return (
