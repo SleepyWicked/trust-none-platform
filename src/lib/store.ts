@@ -72,6 +72,7 @@ interface AppState {
 
   // Supabase sync
   syncFromDatabase: (userId: string) => Promise<void>;
+  loadSiteSettings: () => Promise<void>;
   clearUserData: () => void;
   saveWatchProgressToDb: (episodeId: number, seconds: number) => void;
 }
@@ -191,14 +192,25 @@ export const useAppStore = create<AppState>()(
         }
       },
 
-      // Video URLs
+      // Video URLs (stored in Supabase site_settings for all users)
       episodeVideoUrls: {},
       trailerUrl: "",
-      setEpisodeVideoUrl: (episodeId, url) =>
-        set((s) => ({
-          episodeVideoUrls: { ...s.episodeVideoUrls, [episodeId]: url },
-        })),
-      setTrailerUrl: (url) => set({ trailerUrl: url }),
+      setEpisodeVideoUrl: (episodeId, url) => {
+        const updated = { ...get().episodeVideoUrls, [episodeId]: url };
+        set({ episodeVideoUrls: updated });
+        // Save to Supabase
+        supabase
+          .from("site_settings")
+          .upsert({ key: "episode_video_urls", value: updated, updated_at: new Date().toISOString() }, { onConflict: "key" })
+          .then();
+      },
+      setTrailerUrl: (url) => {
+        set({ trailerUrl: url });
+        supabase
+          .from("site_settings")
+          .upsert({ key: "trailer_url", value: JSON.stringify(url), updated_at: new Date().toISOString() }, { onConflict: "key" })
+          .then();
+      },
 
       // UI
       currentView: "landing",
@@ -300,6 +312,28 @@ export const useAppStore = create<AppState>()(
           }
         } catch (err) {
           console.error("Failed to sync from database:", err);
+        }
+      },
+
+      // Load site-wide settings (video URLs) — runs for ALL visitors
+      loadSiteSettings: async () => {
+        try {
+          const { data } = await supabase
+            .from("site_settings")
+            .select("key, value");
+          if (data) {
+            for (const row of data) {
+              if (row.key === "episode_video_urls" && row.value) {
+                set({ episodeVideoUrls: row.value as Record<number, string> });
+              }
+              if (row.key === "trailer_url" && row.value) {
+                const url = typeof row.value === "string" ? row.value : String(row.value).replace(/^"|"$/g, "");
+                set({ trailerUrl: url });
+              }
+            }
+          }
+        } catch (err) {
+          console.error("Failed to load site settings:", err);
         }
       },
 

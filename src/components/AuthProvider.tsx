@@ -5,9 +5,12 @@ import { supabase } from "@/lib/supabase";
 import { useAppStore } from "@/lib/store";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { setUser, syncFromDatabase, clearUserData } = useAppStore();
+  const { setUser, syncFromDatabase, loadSiteSettings, clearUserData } = useAppStore();
 
   useEffect(() => {
+    // Load site-wide settings (video URLs) for ALL visitors
+    loadSiteSettings();
+
     // Check for existing session on mount
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -40,7 +43,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     );
 
     return () => subscription.unsubscribe();
-  }, [setUser, syncFromDatabase, clearUserData]);
+  }, [setUser, syncFromDatabase, loadSiteSettings, clearUserData]);
 
   return <>{children}</>;
 }
