@@ -41,7 +41,7 @@ export default function VerticalPlayer() {
   const isBunnyPlayer = hasVideo && (videoUrl.includes("mediadelivery.net") || videoUrl.includes("player.mediadelivery.net"));
   // Convert play URL to embed URL for iframe
   const embedUrl = isBunnyPlayer
-    ? videoUrl.replace("/play/", "/embed/") + "?autoplay=true&preload=true&responsive=true"
+    ? videoUrl.replace("/play/", "/embed/") + "?autoplay=false&preload=true&responsive=true&playsinline=true"
     : "";
 
   // ---- REAL VIDEO PLAYBACK ----
@@ -193,18 +193,17 @@ export default function VerticalPlayer() {
       <div
         ref={containerRef}
         className="relative w-full max-w-md aspect-[9/16] bg-black mx-auto overflow-hidden select-none"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        onClick={handleTap}
+        onTouchStart={isBunnyPlayer ? undefined : handleTouchStart}
+        onTouchEnd={isBunnyPlayer ? undefined : handleTouchEnd}
+        onClick={isBunnyPlayer ? undefined : handleTap}
       >
         {/* Bunny.net iframe player */}
         {isBunnyPlayer && unlocked && (
           <iframe
             src={embedUrl}
-            className="absolute inset-0 w-full h-full border-0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            className="absolute inset-0 w-full h-full border-0 z-[5]"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
-            style={{ pointerEvents: showControls ? "none" : "auto" }}
           />
         )}
 
@@ -300,10 +299,11 @@ export default function VerticalPlayer() {
           </div>
         )}
 
-        {/* Controls overlay */}
+        {/* Controls overlay — hidden for Bunny iframe (it has its own controls) */}
         <div
           className={`absolute inset-0 z-10 transition-opacity duration-300 ${
-            showControls ? "opacity-100" : "opacity-0"
+            isBunnyPlayer ? "pointer-events-none opacity-0" :
+            showControls ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
           {/* Top bar */}
