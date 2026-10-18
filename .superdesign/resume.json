@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/": {
+      "targetKind": "existing-ui",
+      "projectId": "b5ab5406-7fdf-4c58-aacc-e62fd214c872",
+      "baselineDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
+      "activeDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [],
+      "contextFiles": [
+        ".superdesign/design-system.md",
+        "src/app/globals.css",
+        "src/app/layout.tsx",
+        "src/components/App.tsx",
+        "src/components/Navigation.tsx",
+        "src/components/HeroSection.tsx",
+        "src/components/ShowPoster.tsx",
+        "src/components/TrailerSection.tsx",
+        "src/components/AboutShow.tsx",
+        "src/components/EpisodeList.tsx",
+        "src/components/EpisodeCard.tsx",
+        "src/components/TierCards.tsx",
+        "src/components/CrewFund.tsx",
+        "src/components/SocialProof.tsx",
+        "src/components/EmailCapture.tsx",
+        "src/components/Footer.tsx",
+        "src/components/SocialShare.tsx",
+        "src/lib/episodes.ts",
+        "src/lib/tiers.ts"
+      ],
+      "fingerprints": {
+        ".superdesign/design-system.md": "3e6908c71e1960e3bf58336a757dc6400518d2c6a9abc38a21a4394fe3e93918",
+        "src/app/globals.css": "dc6b8146cec24c8996577b9e6a393e03604fde62d093b592bc36d20e7dd77195",
+        "src/app/layout.tsx": "62ad1df0d804a7eb1c70ecf81507d9bdbb817ac56fe8fe44702b49cf2113c9a9",
+        "src/components/App.tsx": "18784be0cc8b4aa66c3ba0f4273d6f249e63927ed14fec7c7c1960825419166f",
+        "src/components/Navigation.tsx": "87219c7f4153ef6d422be2ff757c83f21c76715baa43cbb44c136cfe530a08a9",
+        "src/components/HeroSection.tsx": "ecaaa85697401657ade6d63d7a6eed6a0e58745ba7dae95957579a1fdf09c0e3",
+        "src/components/ShowPoster.tsx": "842774e92c3431e0c2caeb2aab30bf73b0e8722f4a0e4925ba4c0375e344a5ae",
+        "src/components/TrailerSection.tsx": "c3826b98675fac2921e2c5ef5846f08cd2f7017822b04b85f484eb0f683d70f6",
+        "src/components/AboutShow.tsx": "c74a1e7d0c42a0e9036975af9e54f39990fa81105b3830d4bab01d42263419fa",
+        "src/components/EpisodeList.tsx": "607cf32961c43712ce81277a418926e1ecd76fdc43068fba5a05ee5865f619c8",
+        "src/components/EpisodeCard.tsx": "e864c7247c58403cccfb23a3e5c7828d9a68494e6b1a2d6a4ea3798894d0ba0e",
+        "src/components/TierCards.tsx": "77fe9b57851c7846fb45a0f83c2779625f0e467cc6e15486b298c076700a7e5c",
+        "src/components/CrewFund.tsx": "50941c945bcc4f0bd79fadaa164fcca0bf988654b303d21cf373a21e565ab4de",
+        "src/components/SocialProof.tsx": "26877b57d6fe738a14bf991b45b4174d11741c3099c90ba10202a975443b975b",
+        "src/components/EmailCapture.tsx": "096c30b23159014b086303991e8a3b7f1a54aece646dbd04ad21dcf9f8f5741e",
+        "src/components/Footer.tsx": "0ea39d93f47b7769cf727855ceacda7767919c4cad479301559fd458fc3c0311",
+        "src/components/SocialShare.tsx": "2acffdbcfce3dacb3e5cbb768cdd2e8d82f251d32969cbbe50fb7f367e252b92",
+        "src/lib/episodes.ts": "cf21cb47040ce9021393bdb76f93314eeae50de7124ed0ca1090e4c00ff37b7d",
+        "src/lib/tiers.ts": "17892aa8da4d3d31bf848837dd3110303b94b43fabe314ade61ae1c84df6d538"
+      },
+      "components": [],
+      "drafts": {
+        "14f90560-d552-4d95-a59f-97cb334ff07a": {
+          "title": "Current Homepage (reproduction)",
+          "visualDirection": "baseline",
+          "currentVersion": 1
+        },
+        "ae138c45-93cd-4925-84f2-4658e9b0b5f4": {
+          "title": "Direction A \u2014 Watch-first",
+          "visualDirection": "ReelShort-style watch-first, swipeable episodes, sticky CTA",
+          "parentDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
+          "currentVersion": 1
+        },
+        "492c1b2d-e094-4cd9-b054-dda0b682eade": {
+          "title": "Direction B \u2014 Gritty editorial",
+          "visualDirection": "film one-sheet, character cards, numbered episode list",
+          "parentDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
+          "currentVersion": 1
+        }
+      }
+    }
+  }
+}
