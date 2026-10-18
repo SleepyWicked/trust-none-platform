@@ -68,6 +68,13 @@
           "visualDirection": "film one-sheet, character cards, numbered episode list",
           "parentDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
           "currentVersion": 1
+        },
+        "df250047-bf99-4332-b749-fc931911b426": {
+          "title": "Direction C \u2014 True to the Original Film",
+          "visualDirection": "original trustnonemovie.com brand: monochrome, Six Caps + Open Sans, real logo/stills/cast; authored directly (credits exhausted)",
+          "parentDraftId": "14f90560-d552-4d95-a59f-97cb334ff07a",
+          "currentVersion": 2,
+          "designSystemPath": ".superdesign/design-system-original-site.md"
         }
       }
     }

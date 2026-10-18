@@ -1,0 +1,218 @@
+{
+  "meta": {
+    "url": "https://trustnonemovie.com",
+    "title": "Wicked Entertainment Network Inc. – Trust None | A Classic Chicago Movie",
+    "description": "",
+    "language": "en",
+    "viewport": "initial-scale=1.0,width=device-width,maximum-scale=1",
+    "themeColor": null,
+    "ogImage": null,
+    "ogTitle": "Wicked Entertainment Network Inc. – Trust None | A Classic Chicago Movie",
+    "ogDescription": ""
+  },
+  "theme": {
+    "mode": "dark",
+    "bodyBackground": "#191919",
+    "isDark": true,
+    "confidence": 0.9
+  },
+  "brand": {
+    "name": "Wicked Entertainment Network Inc. – Trust None",
+    "favicon": {
+      "href": null,
+      "type": null
+    }
+  },
+  "colors": {
+    "dominant": [
+      {
+        "hex": "#ffffff",
+        "ratio": 0.696
+      },
+      {
+        "hex": "#000000",
+        "ratio": 0.295
+      },
+      {
+        "hex": "#fafafa",
+        "ratio": 0.007
+      },
+      {
+        "hex": "#191919",
+        "ratio": 0.002
+      },
+      {
+        "hex": "#555555",
+        "ratio": 0.001
+      }
+    ],
+    "palette": [
+      {
+        "hex": "#191919",
+        "role": "background",
+        "source": "computed"
+      },
+      {
+        "hex": "#ffffff",
+        "role": "foreground",
+        "source": "computed"
+      },
+      {
+        "hex": "#555555",
+        "role": "neutral",
+        "source": "heuristic"
+      }
+    ],
+    "cssVariables": {
+      "--wp-admin-theme-color": "#007cba",
+      "--wp-admin-theme-color-darker-20": "#005a87",
+      "--wp-block-synced-color": "#7a00df",
+      "--wp-admin-theme-color-darker-10": "#006ba1",
+      "--wp-components-color-accent": "#cc1818",
+      "--wp-components-color-accent-darker-10": "#9e1313",
+      "--wp-components-color-accent-darker-20": "#710d0d",
+      "--wp--preset--color--black": "#000000",
+      "--wp--preset--color--cyan-bluish-gray": "#abb8c3",
+      "--wp--preset--color--white": "#ffffff",
+      "--wp--preset--color--pale-pink": "#f78da7",
+      "--wp--preset--color--vivid-red": "#cf2e2e",
+      "--wp--preset--color--luminous-vivid-orange": "#ff6900",
+      "--wp--preset--color--luminous-vivid-amber": "#fcb900",
+      "--wp--preset--color--light-green-cyan": "#7bdcb5",
+      "--wp--preset--color--vivid-green-cyan": "#00d084",
+      "--wp--preset--color--pale-cyan-blue": "#8ed1fc",
+      "--wp--preset--color--vivid-cyan-blue": "#0693e3",
+      "--wp--preset--color--vivid-purple": "#9b51e0",
+      "--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple": "#0693e3",
+      "--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan": "#7adcb4",
+      "--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange": "#fcb900",
+      "--wp--preset--gradient--luminous-vivid-orange-to-vivid-red": "#ff6900",
+      "--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray": "#eeeeee",
+      "--wp--preset--gradient--cool-to-warm-spectrum": "#4aeadc",
+      "--wp--preset--gradient--blush-light-purple": "#ffceec",
+      "--wp--preset--gradient--blush-bordeaux": "#fecda5",
+      "--wp--preset--gradient--luminous-dusk": "#ffcb70",
+      "--wp--preset--gradient--pale-ocean": "#fff5cb",
+      "--wp--preset--gradient--electric-grass": "#caf880",
+      "--wp--preset--gradient--midnight": "#020381",
+      "--wp--preset--shadow--natural": "#000000",
+      "--wp--preset--shadow--deep": "#000000",
+      "--wp--preset--shadow--sharp": "#000000",
+      "--wp--preset--shadow--outlined": "#ffffff",
+      "--wp--preset--shadow--crisp": "#000000"
+    },
+    "gradients": []
+  },
+  "logo": {
+    "status": "confirmed",
+    "reason": null,
+    "best": {
+      "selector": "img",
+      "href": "https://www.trustnonemovie.com/wp-content/uploads/2015/05/TRUSTNONE-logo-e1432057631607.png",
+      "type": "png",
+      "width": 217,
+      "height": 158,
+      "svgContent": null,
+      "colors": [],
+      "isLight": false,
+      "isDark": false,
+      "needsDarkBackground": false,
+      "needsLightBackground": false,
+      "ownership": "first-party",
+      "variant": "color",
+      "brandNameOnLogo": "TRUST NONE",
+      "uploadedUrl": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/brand/802b5eb2-f53b-45e0-8b80-4c1f2c619d62/assets/683d9a19-c9ad-42f9-94b5-a9cb692747fe.png"
+    },
+    "candidates": [
+      {
+        "selector": "img",
+        "href": "https://www.trustnonemovie.com/wp-content/uploads/2015/05/TRUSTNONE-logo-e1432057631607.png",
+        "type": "png",
+        "width": 217,
+        "height": 158,
+        "svgContent": null,
+        "colors": [],
+        "isLight": false,
+        "isDark": false,
+        "needsDarkBackground": false,
+        "needsLightBackground": false,
+        "ownership": "first-party"
+      },
+      {
+        "selector": "img",
+        "href": "https://www.trustnonemovie.com/wp-content/uploads/2015/05/TRUSTNONE-logo-e1432057631607.png",
+        "type": "png",
+        "width": 217,
+        "height": 158,
+        "svgContent": null,
+        "colors": [],
+        "isLight": false,
+        "isDark": false,
+        "needsDarkBackground": false,
+        "needsLightBackground": false,
+        "ownership": "first-party"
+      },
+      {
+        "selector": "img",
+        "href": "https://www.trustnonemovie.com/wp-content/uploads/2015/05/TRUSTNONE-logo-e1432057631607.png",
+        "type": "png",
+        "width": 217,
+        "height": 158,
+        "svgContent": null,
+        "colors": [],
+        "isLight": false,
+        "isDark": false,
+        "needsDarkBackground": false,
+        "needsLightBackground": false,
+        "ownership": "first-party"
+      }
+    ]
+  },
+  "fonts": {
+    "computed": [
+      {
+        "family": "\"Open Sans\", sans-serif",
+        "weights": [
+          "400",
+          "100",
+          "700"
+        ],
+        "source": "web"
+      },
+      {
+        "family": "\"Six Caps\", sans-serif",
+        "weights": [
+          "400"
+        ],
+        "source": "web"
+      }
+    ],
+    "baseSizePx": 12
+  },
+  "confidence": {
+    "colorExtraction": 0.9,
+    "logoDetection": 0.95,
+    "fontDetection": 0.8
+  },
+  "screenshot": {
+    "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/brand/802b5eb2-f53b-45e0-8b80-4c1f2c619d62/screenshot.png",
+    "width": 1920,
+    "height": 1080,
+    "sizeBytes": 1129681,
+    "uploadedAt": "2026-10-18T02:42:26.698Z"
+  },
+  "assets": {
+    "683d9a19-c9ad-42f9-94b5-a9cb692747fe": {
+      "url": "https://vgbujcuwptvheqijyjbe.supabase.co/storage/v1/object/public/hmac-uploads/brand/802b5eb2-f53b-45e0-8b80-4c1f2c619d62/assets/683d9a19-c9ad-42f9-94b5-a9cb692747fe.png",
+      "name": "TRUSTNONE-logo-e1432057631607.png",
+      "type": "image",
+      "description": "",
+      "metadata": {
+        "size": "40.12 KB",
+        "mimeType": "image/png",
+        "sizeBytes": 41087,
+        "uploadedAt": "2026-10-18T02:42:26.894Z"
+      }
+    }
+  }
+}
