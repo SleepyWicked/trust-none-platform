@@ -1,33 +1,33 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Open_Sans, Six_Caps } from "next/font/google";
+import AuthProvider from "@/components/site/AuthProvider";
+import { FILM, HERO_STILL } from "@/lib/film";
 import "./globals.css";
 
-const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
+const sixCaps = Six_Caps({ variable: "--font-six-caps", weight: "400", subsets: ["latin"] });
+const openSans = Open_Sans({ variable: "--font-open-sans", subsets: ["latin"] });
+
+const description = `${FILM.tagline}. Chicago's debut street film — rent or buy and stream it now.`;
 
 export const metadata: Metadata = {
-  title: "Trust None | A Chicago Street Drama",
-  description:
-    "In the city streets of Chicago, even your own family can't be trusted. Stream Season 1 now.",
-  keywords: ["Trust None", "Chicago", "street drama", "micro drama", "streaming"],
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://trustnonemovie.com"),
+  title: { default: `${FILM.title} | ${FILM.tagline}`, template: `%s | ${FILM.title}` },
+  description,
   openGraph: {
-    title: "Trust None | Season 1 Streaming Now",
-    description: "In the city streets of Chicago, even your own family can't be trusted.",
-    type: "website",
+    title: `${FILM.title} — ${FILM.tagline}`,
+    description,
+    type: "video.movie",
+    images: [{ url: HERO_STILL }],
   },
+  twitter: { card: "summary_large_image", images: [HERO_STILL] },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable} h-full antialiased`}>
-      <head>
-        <link
-          rel="icon"
-          href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a0a'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='bold' fill='%23d4a520'>T</text></svg>"
-        />
-      </head>
-      <body className="min-h-full bg-chicago text-white">{children}</body>
+    <html lang="en" className={`${sixCaps.variable} ${openSans.variable} h-full`}>
+      <body className="min-h-full">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

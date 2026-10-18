@@ -1,81 +1,77 @@
--- Trust None Platform — Supabase Schema
--- Run this in the Supabase SQL Editor
+-- Trust None (the movie) — Supabase schema
+-- Run in the Supabase SQL Editor. Safe to re-run.
+--
+-- Security model: browsers can only READ their own purchases. Purchases are
+-- written exclusively by the Stripe webhook using the service role key, so
+-- nobody can grant themselves the movie from the browser console.
 
 -- Profiles (synced from auth.users)
-create table profiles (
+create table if not exists profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text,
   name text,
-  coin_balance int default 0,
   created_at timestamptz default now()
 );
 
--- Auto-create profile on signup
 create or replace function handle_new_user()
 returns trigger as $$
 begin
-  insert into profiles (id, email, name)
-  values (new.id, new.email, coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)));
+  insert into public.profiles (id, email, name)
+  values (new.id, new.email, coalesce(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)))
+  on conflict (id) do nothing;
   return new;
 end;
-$$ language plpgsql security definer;
+$$ language plpgsql security definer set search_path = public;
 
+drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function handle_new_user();
 
--- Unlocked episodes
-create table user_episodes (
+-- Purchases: film rentals/purchases and shop orders, one row per paid Stripe session.
+create table if not exists purchases (
   id bigint primary key generated always as identity,
-  user_id uuid references profiles(id) on delete cascade,
-  episode_id int not null,
-  unlocked_at timestamptz default now(),
-  unique(user_id, episode_id)
+  user_id uuid references profiles(id) on delete set null,
+  email text,
+  kind text not null check (kind in ('rent', 'buy', 'product')),
+  product_id text,
+  amount_cents int not null default 0,
+  expires_at timestamptz,          -- set for rentals only
+  shipping jsonb,                  -- physical orders only
+  stripe_session_id text not null unique,
+  created_at timestamptz default now()
 );
+create index if not exists purchases_user_idx on purchases (user_id);
 
--- Tier purchases
-create table user_tiers (
+-- Newsletter signups (written by /api/subscribe with the service role)
+create table if not exists email_signups (
   id bigint primary key generated always as identity,
-  user_id uuid references profiles(id) on delete cascade,
-  tier_id int not null,
-  purchased_at timestamptz default now(),
-  unique(user_id, tier_id)
-);
-
--- Watch progress
-create table watch_progress (
-  id bigint primary key generated always as identity,
-  user_id uuid references profiles(id) on delete cascade,
-  episode_id int not null,
-  seconds_watched int default 0,
-  updated_at timestamptz default now(),
-  unique(user_id, episode_id)
-);
-
--- Transactions
-create table transactions (
-  id bigint primary key generated always as identity,
-  user_id uuid references profiles(id) on delete cascade,
-  type text not null,
-  amount decimal(10,2) not null,
-  description text,
-  stripe_session_id text,
+  email text not null unique,
   created_at timestamptz default now()
 );
 
--- Row Level Security
 alter table profiles enable row level security;
-alter table user_episodes enable row level security;
-alter table user_tiers enable row level security;
-alter table watch_progress enable row level security;
-alter table transactions enable row level security;
+alter table purchases enable row level security;
+alter table email_signups enable row level security;
 
+drop policy if exists "Users read own profile" on profiles;
+drop policy if exists "Users update own profile" on profiles;
 create policy "Users read own profile" on profiles for select using (auth.uid() = id);
-create policy "Users update own profile" on profiles for update using (auth.uid() = id);
-create policy "Users read own episodes" on user_episodes for select using (auth.uid() = user_id);
-create policy "Users insert own episodes" on user_episodes for insert with check (auth.uid() = user_id);
-create policy "Users read own tiers" on user_tiers for select using (auth.uid() = user_id);
-create policy "Users insert own tiers" on user_tiers for insert with check (auth.uid() = user_id);
-create policy "Users manage own progress" on watch_progress for all using (auth.uid() = user_id);
-create policy "Users read own transactions" on transactions for select using (auth.uid() = user_id);
-create policy "Users insert own transactions" on transactions for insert with check (auth.uid() = user_id);
+
+drop policy if exists "Users read own purchases" on purchases;
+create policy "Users read own purchases" on purchases for select using (auth.uid() = user_id);
+
+-- No insert/update/delete policies on purchases or email_signups: with RLS on,
+-- only the service role (server) can write them.
+
+-- ---------------------------------------------------------------------------
+-- Upgrading a database created from the old series schema? The old tables
+-- (user_episodes, user_tiers, watch_progress, transactions, site_settings)
+-- belong to the series platform and are no longer used here. At minimum,
+-- remove the browser write policies that let users grant themselves content:
+--
+--   drop policy if exists "Users insert own episodes" on user_episodes;
+--   drop policy if exists "Users insert own tiers" on user_tiers;
+--   drop policy if exists "Users insert own transactions" on transactions;
+--   alter table profiles drop column if exists coin_balance;
+-- ---------------------------------------------------------------------------

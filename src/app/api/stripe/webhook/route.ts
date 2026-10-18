@@ -1,99 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { createServerClient } from "@/lib/supabase";
-import { coinPackages } from "@/lib/tiers";
+import { RENTAL_HOURS } from "@/lib/catalog";
 
+// The ONLY place purchases are granted. Every event must carry a valid
+// Stripe signature; there is no unsigned fallback.
 export async function POST(request: NextRequest) {
-  const body = await request.text();
-  const sig = request.headers.get("stripe-signature");
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  const signature = request.headers.get("stripe-signature");
+  if (!secret) {
+    console.error("STRIPE_WEBHOOK_SECRET is not set; refusing webhook");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
+  if (!signature) return NextResponse.json({ error: "Missing signature" }, { status: 400 });
 
-  let event;
-
-  if (webhookSecret && webhookSecret !== "whsec_placeholder" && sig) {
-    try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Webhook error";
-      console.error("Webhook verification failed:", message);
-      return NextResponse.json({ error: message }, { status: 400 });
-    }
-  } else {
-    event = JSON.parse(body);
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(await request.text(), signature, secret);
+  } catch (err) {
+    console.error("Webhook verification failed:", err instanceof Error ? err.message : err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  if (event.type === "checkout.session.completed") {
+  if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
     const session = event.data.object;
-    const meta = session.metadata || {};
-    const userId = meta.userId;
+    if (session.payment_status !== "paid") return NextResponse.json({ received: true });
 
-    if (!userId) {
-      console.log("No userId in metadata, skipping DB write");
+    const meta = session.metadata ?? {};
+    const kind = meta.kind;
+    if (kind !== "rent" && kind !== "buy" && kind !== "product") {
       return NextResponse.json({ received: true });
     }
 
-    const supabase = createServerClient();
-    const type = meta.type;
-    const amountPaid = (session.amount_total || 0) / 100;
+    const { error } = await createServerClient()
+      .from("purchases")
+      .insert({
+        user_id: meta.userId || null,
+        email: session.customer_details?.email ?? null,
+        kind,
+        product_id: meta.productId || null,
+        amount_cents: session.amount_total ?? 0,
+        expires_at: kind === "rent" ? new Date(Date.now() + RENTAL_HOURS * 3600_000).toISOString() : null,
+        shipping: session.collected_information?.shipping_details ?? null,
+        stripe_session_id: session.id,
+      });
 
-    // Record transaction
-    await supabase.from("transactions").insert({
-      user_id: userId,
-      type,
-      amount: amountPaid,
-      description: `${type}: ${session.payment_intent || session.id}`,
-      stripe_session_id: session.id,
-    });
-
-    // Apply purchase effects
-    switch (type) {
-      case "coins": {
-        const pkg = coinPackages.find((p) => p.id === meta.packageId);
-        if (pkg) {
-          // Read current balance and add coins
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("coin_balance")
-            .eq("id", userId)
-            .single();
-          if (profile) {
-            await supabase
-              .from("profiles")
-              .update({ coin_balance: (profile.coin_balance || 0) + pkg.coins })
-              .eq("id", userId);
-          }
-        }
-        break;
-      }
-      case "season": {
-        const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((ep) => ({
-          user_id: userId,
-          episode_id: ep,
-        }));
-        await supabase.from("user_episodes").upsert(rows, { onConflict: "user_id,episode_id" });
-        break;
-      }
-      case "tier": {
-        const tierId = Number(meta.tierId);
-        if (tierId) {
-          await supabase.from("user_tiers").upsert({ user_id: userId, tier_id: tierId }, { onConflict: "user_id,tier_id" });
-          // All tiers include season pass
-          const rows = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((ep) => ({
-            user_id: userId,
-            episode_id: ep,
-          }));
-          await supabase.from("user_episodes").upsert(rows, { onConflict: "user_id,episode_id" });
-        }
-        break;
-      }
-      case "founding": {
-        // Founding supporter gets episode 1
-        await supabase.from("user_episodes").upsert({ user_id: userId, episode_id: 1 }, { onConflict: "user_id,episode_id" });
-        break;
-      }
+    // 23505 = unique violation: Stripe retried an event we already recorded.
+    if (error && error.code !== "23505") {
+      console.error("Failed to record purchase:", error.message);
+      return NextResponse.json({ error: "Failed to record purchase" }, { status: 500 });
     }
-
-    console.log("Payment processed:", { userId, type, amount: amountPaid });
   }
 
   return NextResponse.json({ received: true });
